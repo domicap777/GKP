@@ -17,11 +17,15 @@ public class gun : MonoBehaviour
     public GameObject bulletHole;
     public Text text;
     public int ammo;
+    public float reloadingTime;
+    public float timeBetweenShots;
+    public float weaponSpread;
+    public static float spread;
     public int ammoClipSize;
     int ammoClipt;
     bool isShot=false;
-    static public bool isShoting=false;
     bool isRealouding=false;
+    bool canShot = true;
     AudioSource source;
     Animation animator;
     
@@ -34,10 +38,9 @@ public class gun : MonoBehaviour
     }
     void Update()
     {
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetButton("Fire1"))
         {
             isShot = true;
-            isShoting = true;
         }
         if (Input.GetKeyDown(KeyCode.R)&& isRealouding==false)
         {
@@ -50,46 +53,65 @@ public class gun : MonoBehaviour
         Vector3 screenCenter = new Vector3(Screen.width / 2, Screen.height / 2, 0);
         Ray ray = Camera.main.ScreenPointToRay(screenCenter+offset );
         RaycastHit hit;
-        if(isShot&& ammoClipt > 0&& isRealouding==false)
-        { 
-            if (Physics.Raycast(ray, out hit, range))
+        if(isShot &&  isRealouding==false && canShot )
+        {
+            if(ammoClipt > 0)
             {
-
-                isShot = false;
-                Instantiate(bulletHole, hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal));
-                hit.collider.gameObject.SendMessage("pistolHit", demage, SendMessageOptions.DontRequireReceiver);
+                if (Physics.Raycast(ray, out hit, range))
+                {
+                    Instantiate(bulletHole, hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal));
+                    hit.collider.gameObject.SendMessage("pistolHit", demage, SendMessageOptions.DontRequireReceiver);
+                }
+                StartCoroutine("TimeBetweenShots");
+                ammoClipt--;
+                text.text = ammoClipt + "/" + (ammo);
+                source.PlayOneShot(shotSound);
+                //animator.Play("gun");
+               
             }
-            crosshairspread.spread += crosshairspread.shotSpred/2;
-            ammoClipt--;
-            text.text = ammoClipt+"/"+(ammo);
-            source.PlayOneShot(shotSound);
-            animator.Play("gun");
-        } else if(isShot&&ammo>0)
-        {
-            reload();
-            isShot = false;
+            else if(ammo > 0)
+            {
+                reload(); 
+            }
+            else
+            {
+                source.PlayOneShot(enptyGunSound);
+            }            
         }
-        else if(isShot)
-        {
-            source.PlayOneShot(enptyGunSound);
-            isShot = false;
-        }
+        spread = isShot?weaponSpread: 0;
+        isShot = false;
     }
 
     private void reload()
     {
-
-           ammoClipt += ammo >= ammoClipSize ? ammoClipSize : ammo;
-           ammo -= ammo >= ammoClipSize ? ammoClipSize : ammo;
-           source.PlayOneShot(reloadSound);
-        StartCoroutine("Reload");
-        text.text = ammoClipt + "/" + (ammo);
-
+        if(ammoClipt!=ammoClipSize)
+        {
+            if(ammo>ammoClipSize-ammoClipt)
+            {
+                StartCoroutine("Reload");
+                ammo -= ammoClipSize - ammoClipt;
+                ammoClipt = ammoClipSize;
+            }
+            else
+            {
+                StartCoroutine("Reload");
+                ammoClipt += ammo;
+                ammo = 0;
+            }
+        }
+    }
+ IEnumerator TimeBetweenShots()
+    {
+        canShot = false;
+        yield return new WaitForSeconds(timeBetweenShots);
+        canShot = true;
     }
  IEnumerator Reload()
     {
+        source.PlayOneShot(reloadSound);
         isRealouding = true;
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(reloadingTime);
+        text.text = ammoClipt + "/" + (ammo);
         isRealouding = false;
     }
 }
