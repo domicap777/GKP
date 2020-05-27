@@ -22,6 +22,7 @@ public class weapon : MonoBehaviour
     public float weaponSpread;
     public static float spread;
     public int ammoClipSize;
+    public bool inOwned;
     int ammoClipt;
     bool isShot=false;
     bool isRealouding=false;

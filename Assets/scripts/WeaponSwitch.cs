@@ -7,12 +7,18 @@ public class WeaponSwitch : MonoBehaviour
 {
     // Start is called before the first frame update
     public List<GameObject> weapons;
-    public int initleWeapon;
-    int selectedWeapon;
+    int previousWeapon=0;
+    int selectedWeapon=0;
     void Start()
     {
-        selectedWeapon = initleWeapon % weapons.Count;
-        UpdateWeapon();
+        for(int i=0;i<weapons.Count;i++)
+        {
+            if(i==selectedWeapon)
+                weapons[i].SetActive(true);
+            else
+                weapons[i].SetActive(false);
+        }
+
     }
 
     // Update is called once per frame
@@ -20,33 +26,29 @@ public class WeaponSwitch : MonoBehaviour
     {
        //scrol zmianabroni
        if(Input.GetAxis("Mouse ScrollWheel")>0)
-            selectedWeapon = (selectedWeapon + 1) % weapons.Count;
+            do
+            {
+                selectedWeapon = (previousWeapon + 1) % weapons.Count;
+            } while (weapons[selectedWeapon].GetComponent<weapon>().inOwned== true);
         if (Input.GetAxis("Mouse ScrollWheel") < 0)
-            selectedWeapon = (((selectedWeapon - 1)+ weapons.Count) % weapons.Count); //wb ? 
+            do
+            {
+                selectedWeapon = (((previousWeapon - 1) + weapons.Count) % weapons.Count);
+            } while (weapons[selectedWeapon].GetComponent<weapon>().inOwned == true); 
         if (Input.GetKeyDown(KeyCode.Alpha1))
             selectedWeapon = 0;
-        if (Input.GetKeyDown(KeyCode.Alpha2) && weapons.Count>1)
+        if (Input.GetKeyDown(KeyCode.Alpha2) && weapons[1].GetComponent<weapon>().inOwned == true)
             selectedWeapon = 1;
-        if (Input.GetKeyDown(KeyCode.Alpha2) && weapons.Count > 2)
+        if (Input.GetKeyDown(KeyCode.Alpha2) && weapons[2].GetComponent<weapon>().inOwned == true)
             selectedWeapon = 2;
-        if (Input.GetKeyDown(KeyCode.Alpha2) && weapons.Count > 3)
+        if (Input.GetKeyDown(KeyCode.Alpha2) && weapons[3].GetComponent<weapon>().inOwned == true)
             selectedWeapon = 3;
-        UpdateWeapon();
-
-    }
-
-    private void UpdateWeapon()
-    {
-        for(int i=0;i<weapons.Count;i++)
+        if(previousWeapon!=selectedWeapon)
         {
-            if(selectedWeapon==i)
-            {
-                weapons[i].SetActive(true);
-            }
-            else
-            {
-                weapons[i].SetActive(false);
-            }
+            weapons[previousWeapon].SetActive(false);
+            weapons[selectedWeapon].SetActive(true);
+            previousWeapon = selectedWeapon;
         }
+        
     }
 }
