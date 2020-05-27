@@ -28,9 +28,7 @@ public class hero : MonoBehaviour
     {
         textHealth.text = health.ToString();
         textarmor.text = armor.ToString();
-        imageHealth.localPosition = new Vector3(100 + 2 * health, 0, 0);
         imageHealth.sizeDelta = new Vector2(4 * health, 100);
-        imageArmor.localPosition = new Vector3(100 + 2 * armor, 0, 0);
         imageArmor.sizeDelta = new Vector2(4*armor,100);
     }
 }
