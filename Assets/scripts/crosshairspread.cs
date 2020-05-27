@@ -38,7 +38,7 @@ public class crosshairspread : MonoBehaviour
         targetSpread += FirstPersonController.isJumping ? jumpSpred : 0;
         targetSpread += FirstPersonController.isRuning ? runSpred : 0;
         targetSpread += FirstPersonController.isWalking ? walkSpred : 0;
-        targetSpread += gun.spread;
+        targetSpread += weapon.spread;
 
         if ( targetSpread >spread)
         {
