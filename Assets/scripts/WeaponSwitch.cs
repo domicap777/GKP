@@ -64,4 +64,15 @@ public class WeaponSwitch : MonoBehaviour
         }
 
     }
+    public void setWeaponActive(int type)
+    {
+        weapons[type].InOwned = true;
+        switchWepon(type);
+
+        Transform parent = transform.parent;
+        Transform transform1 = parent.Find("Canvas");
+        Transform transform2 = transform1.Find("UIWeapons");
+        UiWeaponsControler UiWeaponsControler = transform2.GetComponent<UiWeaponsControler>();
+                  UiWeaponsControler.update();
+    }
 }

@@ -27,8 +27,7 @@ public class pickUpWeapon : MonoBehaviour
             }
             else
             {
-                pickedWeapon.InOwned = true;
-                weaponSwitch.switchWepon(type);
+                weaponSwitch.setWeaponActive(type);
             }
             Destroy(this.gameObject);
         }
