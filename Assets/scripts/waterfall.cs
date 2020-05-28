@@ -3,10 +3,9 @@ using System.Collections;
 
 public class waterfall: MonoBehaviour
 {
-
-    public float WF_speed = 0.75f;
-
-    public Renderer WF_renderer;
+    [SerializeField]
+     float WF_speed = 0.75f;
+    Renderer WF_renderer;
 
     void Start()
     {

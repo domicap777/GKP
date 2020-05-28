@@ -6,17 +6,22 @@ using UnityEngine;
 public class WeaponSwitch : MonoBehaviour
 {
     // Start is called before the first frame update
-    public List<GameObject> weapons;
+    [SerializeField]
+    List<weapon> weapons;
     int previousWeapon = 0;
     int selectedWeapon = 0;
+
+    public List<weapon> Weapons { get => weapons; set => weapons = value; }
+    public int SelectedWeapon { get => selectedWeapon; set => selectedWeapon = value; }
+
     void Start()
     {
         for (int i = 0; i < weapons.Count; i++)
         {
             if (i == selectedWeapon)
-                weapons[i].SetActive(true);
+                weapons[i].gameObject.SetActive(true);
             else
-                weapons[i].SetActive(false);
+                weapons[i].gameObject.SetActive(false);
         }
 
     }
@@ -29,25 +34,34 @@ public class WeaponSwitch : MonoBehaviour
             do
             {
                 selectedWeapon = (selectedWeapon + 1) % weapons.Count;
-            } while (weapons[selectedWeapon].GetComponent<weapon>().inOwned == false);
+            } while (weapons[selectedWeapon].GetComponent<weapon>().InOwned == false);
         if (Input.GetAxis("Mouse ScrollWheel") < 0)
             do
             {
                 selectedWeapon = (((selectedWeapon - 1) + weapons.Count) % weapons.Count);
-            } while (weapons[selectedWeapon].GetComponent<weapon>().inOwned == false);
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-            selectedWeapon = 0;
-        if (Input.GetKeyDown(KeyCode.Alpha2) && weapons[1].GetComponent<weapon>().inOwned == true)
-            selectedWeapon = 1;
-        if (Input.GetKeyDown(KeyCode.Alpha3) && weapons[2].GetComponent<weapon>().inOwned == true)
-            selectedWeapon = 2;
-        if (Input.GetKeyDown(KeyCode.Alpha4) && weapons[3].GetComponent<weapon>().inOwned == true)
-            selectedWeapon = 3;
+            } while (weapons[selectedWeapon].GetComponent<weapon>().InOwned == false);
+        for(int i=49;i<49+weapons.Count;i++)
+        {
+            if (Input.GetKeyDown((KeyCode)i))
+            {
+                selectedWeapon = i-49; //49 Alpha1
+            }
+        }
         if (previousWeapon != selectedWeapon)
         {
-            weapons[previousWeapon].SetActive(false);
-            weapons[selectedWeapon].SetActive(true);
-            previousWeapon = selectedWeapon;
+            switchWepon(selectedWeapon);
         }
+
+    }
+    public void switchWepon(int toWeapon)
+    {
+        if(toWeapon<weapons.Count&&weapons[toWeapon].InOwned==true)
+        {
+            weapons[previousWeapon].gameObject.SetActive(false);
+            weapons[toWeapon].gameObject.SetActive(true);
+             previousWeapon = toWeapon;
+            selectedWeapon = toWeapon;
+        }
+
     }
 }

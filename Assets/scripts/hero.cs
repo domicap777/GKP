@@ -6,16 +6,23 @@ using UnityEngine.UI;
 public class hero : MonoBehaviour
 {
     // Start is called before the first frame update
-    public  int health = 100;
-    public  int armor = 0;
-    public GameObject healthBar;
-    public GameObject armorBar;
+    [SerializeField]
+    int health = 100;
+    [SerializeField]
+    int armor = 0;
+    [SerializeField]
+    GameObject healthBar;
+    [SerializeField]
+    GameObject armorBar;
     private RectTransform imageHealth;
     private RectTransform imageArmor;
+    [SerializeField]
     public Text textHealth;
+    [SerializeField]
     public Text textarmor;
 
-
+    public int Health { get => health; set => health = value; }
+    public int Armor { get => armor; set => armor = value; }
 
     void Awake()
     {

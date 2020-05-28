@@ -9,27 +9,46 @@ public class weapon : MonoBehaviour
 {
     // Start is called before the first frame update
     [SerializeField]
-    private float demage;
-    public float range;
-    public AudioClip shotSound;
-    public AudioClip reloadSound;
-    public AudioClip enptyGunSound;
-    public GameObject bulletHole;
-    public Text text;
-    public int ammo;
-    public float reloadingTime;
-    public float timeBetweenShots;
-    public float weaponSpread;
+    private float demage, range, reloadingTime, timeBetweenShots, weaponSpread;
+    [SerializeField]
+    private AudioClip enptyGunSound;
+    [SerializeField]
+    private GameObject bulletHole;
+    [SerializeField]
+    private Text text;
+    [SerializeField]
+    private int ammoClipSize;
+    [SerializeField]
+    private bool inOwned;
+
     public static float spread;
-    public int ammoClipSize;
-    public bool inOwned;
     int ammoClipt;
     bool isShot=false;
     bool isRealouding=false;
     bool canShot = true;
     AudioSource source;
     Animation animator;
-    
+    [SerializeField]
+    private AudioClip shotSound;
+    [SerializeField]
+    private AudioClip reloadSound;
+    [SerializeField]
+    private int ammo;
+
+    public float Demage { get => demage; set => demage = value; }
+    public float Range { get => range; set => range = value; }
+    public float ReloadingTime { get => reloadingTime; set => reloadingTime = value; }
+    public float TimeBetweenShots1 { get => timeBetweenShots; set => timeBetweenShots = value; }
+    public float WeaponSpread { get => weaponSpread; set => weaponSpread = value; }
+    public AudioClip ShotSound { get => shotSound; set => shotSound = value; }
+    public AudioClip ReloadSound { get => reloadSound; set => reloadSound = value; }
+    public AudioClip EnptyGunSound { get => enptyGunSound; set => enptyGunSound = value; }
+    public GameObject BulletHole { get => bulletHole; set => bulletHole = value; }
+    public Text Text { get => text; set => text = value; }
+    public int Ammo { get => ammo; set => ammo = value; }
+    public int AmmoClipSize { get => ammoClipSize; set => ammoClipSize = value; }
+    public bool InOwned { get => inOwned; set => inOwned = value; }
+
     void Awake()
     {
         source = GetComponent<AudioSource>();

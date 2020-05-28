@@ -5,15 +5,15 @@ using UnityStandardAssets.Characters.FirstPerson;
 
 public class crosshairspread : MonoBehaviour
 {
-    public GameObject crosshair;
+    [SerializeField]
+    GameObject crosshair;
     GameObject topPart;
     GameObject bottomPart;
     GameObject leftPart;
     GameObject rightPart;
-    public const float walkSpred = 20;
-    public const float runSpred = 40;
-    public const float jumpSpred = 60;
-    public const float shotSpred = 30;
+    const float walkSpred = 20;
+    const float runSpred = 40;
+    const float jumpSpred = 60;
     static public float spread = 0;
     private float targetSpread = 0;
     float startPosition = 30;
