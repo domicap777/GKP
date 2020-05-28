@@ -39,9 +39,9 @@ public class WeaponSwitch : MonoBehaviour
             selectedWeapon = 0;
         if (Input.GetKeyDown(KeyCode.Alpha2) && weapons[1].GetComponent<weapon>().inOwned == true)
             selectedWeapon = 1;
-        if (Input.GetKeyDown(KeyCode.Alpha2) && weapons[2].GetComponent<weapon>().inOwned == true)
+        if (Input.GetKeyDown(KeyCode.Alpha3) && weapons[2].GetComponent<weapon>().inOwned == true)
             selectedWeapon = 2;
-        if (Input.GetKeyDown(KeyCode.Alpha2) && weapons[3].GetComponent<weapon>().inOwned == true)
+        if (Input.GetKeyDown(KeyCode.Alpha4) && weapons[3].GetComponent<weapon>().inOwned == true)
             selectedWeapon = 3;
         if (previousWeapon != selectedWeapon)
         {

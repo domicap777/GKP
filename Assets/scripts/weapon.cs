@@ -8,8 +8,8 @@ using Random = UnityEngine.Random;
 public class weapon : MonoBehaviour
 {
     // Start is called before the first frame update
-
-    public float demage;
+    [SerializeField]
+    private float demage;
     public float range;
     public AudioClip shotSound;
     public AudioClip reloadSound;
@@ -60,7 +60,7 @@ public class weapon : MonoBehaviour
                 if (Physics.Raycast(ray, out hit, range))
                 {
                     if (enptyGunSound != null)
-                        Instantiate(bulletHole, hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal));
+                        Instantiate(bulletHole, hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal)).transform.parent=hit.collider.gameObject.transform;
                     hit.collider.gameObject.SendMessage("pistolHit", demage, SendMessageOptions.DontRequireReceiver);
                 }
                 StartCoroutine("TimeBetweenShots");
