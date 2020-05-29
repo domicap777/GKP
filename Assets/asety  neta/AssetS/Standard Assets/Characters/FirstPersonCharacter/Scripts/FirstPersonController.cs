@@ -4,6 +4,7 @@ using UnityStandardAssets.CrossPlatformInput;
 using UnityStandardAssets.Utility;
 using Random = UnityEngine.Random;
 
+
 namespace UnityStandardAssets.Characters.FirstPerson
 {
     [RequireComponent(typeof(CharacterController))]
@@ -73,6 +74,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
             if (!m_PreviouslyGrounded && m_CharacterController.isGrounded)
             {
+
                 StartCoroutine(m_JumpBob.DoBobCycle());
                 PlayLandingSound();
                 m_MoveDir.y = 0f;
