@@ -11,7 +11,7 @@ public class Enemy : MonoBehaviour
 
     public void pistolHit(int demage)
     {
-        Debug.Log("jd"+ demage);
+        Debug.Log("jd");
     }
 
    

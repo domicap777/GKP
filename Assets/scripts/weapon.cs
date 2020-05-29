@@ -78,6 +78,7 @@ public class weapon : MonoBehaviour
             {
                 if (Physics.Raycast(ray, out hit, range))
                 {
+                    Debug.Log("bullet");
                     if (enptyGunSound != null)
                         Instantiate(bulletHole, hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal)).transform.parent=hit.collider.gameObject.transform;
                     hit.collider.gameObject.SendMessage("pistolHit", demage, SendMessageOptions.DontRequireReceiver);
