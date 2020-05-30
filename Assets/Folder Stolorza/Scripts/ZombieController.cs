@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO.Compression;
 using UnityEditor.Experimental.UIElements.GraphView;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.EventSystems;
 enum MoveState
 {
@@ -18,11 +19,12 @@ public class ZombieController : MonoBehaviour
     private Rigidbody rb;
     [SerializeField] private float speed;
     Vector3 moveVector;
-    private float directionX,directionZ;
     MoveState moveDirection;
-    public bool ZRotation;
     Transform player;
     Animator anim;
+    public NavMeshAgent agent;
+    public bool atacking=false,isDead=false;
+    [SerializeField] int health=2;
     void Start()
     {
         transform = GetComponent<Transform>();
@@ -30,20 +32,11 @@ public class ZombieController : MonoBehaviour
         moveVector = new Vector3(0, 0, 0);
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
         anim = GetComponent<Animator>();
+        moveDirection = MoveState.FollowState;
     }
     private void FixedUpdate()
     {
-
-        if (ZRotation)
-            moveDirection = MoveState.FollowState;
-        else
-            moveDirection = MoveState.WalkState;
-        if (Vector3.Distance(player.position, this.transform.position) < 10)
-        {
-            moveDirection = MoveState.FollowState;
-        }
-            CheckWhereToFace();
-
+            CheckWhereToFace();   
     }
     void CheckWhereToFace()
     {
@@ -54,23 +47,32 @@ public class ZombieController : MonoBehaviour
                 //TODO: idle annimation state
                 break;
             case MoveState.WalkState://stan w którym postać porusza się do przodu
-              moveVector = gameObject.transform.rotation * Vector3.forward * speed;
-                rb.position += moveVector;
+
                 break;
             case MoveState.FollowState://stan w którym postać w strone gracza
-                    Vector3 direcion = player.position - this.transform.position;
-                    direcion.y = 0;
-                    this.transform.rotation = Quaternion.Slerp(this.transform.rotation,
-                        Quaternion.LookRotation(direcion), 0.1f);
-                    moveVector = gameObject.transform.rotation * Vector3.forward * speed;
-                    rb.position += moveVector;
-                    break;
+                if (!atacking)
+                {
+                    agent.SetDestination(player.position);//cel poruszania sie obiektu
+                    agent.speed = speed;
+                    if (Vector3.Distance(player.position, this.transform.position) < 5)
+                        moveDirection = MoveState.AtackState;
+                }
+                break;
             case MoveState.AtackState:
-
+                agent.SetDestination(player.position);
+                anim.SetBool("isAtack", true);
+                agent.speed = 0;
+                if (Vector3.Distance(player.position, this.transform.position) >= 5)
+                    moveDirection = MoveState.FollowState;
                 break;
 
             case MoveState.DeadState:
-
+                isDead = true;
+                agent.speed = 0;
+                StartDeadAnim();
+                gameObject.GetComponent<CapsuleCollider>().enabled = false;
+                gameObject.GetComponent<NavMeshAgent>().enabled = false;
+               // agent.enabled = false;
                 break;
             default:
                 break;
@@ -80,9 +82,27 @@ public class ZombieController : MonoBehaviour
     void EndAtackAnim()
     {
         anim.SetBool("isAtack", false);
+        atacking = false;
     }
     void StartDeadAnim()
     {
         anim.SetBool("isDead", true);
+    }
+    void EndHurtAnim()
+    {
+        anim.SetBool("isHurt", false);
+    }
+    public void pistolHit(int demage)
+    {
+        this.health -= demage;
+        if (this.health <= 0)
+        {
+            moveDirection = MoveState.DeadState;
+        }
+        else
+        {
+            anim.SetBool("isHurt", true);
+        }
+
     }
 }

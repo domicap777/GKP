@@ -1759,6 +1759,7 @@ GameObject:
   - component: {fileID: 6647335279306394631}
   - component: {fileID: 1086994449846168867}
   - component: {fileID: 1239994938518087673}
+  - component: {fileID: 941896970}
   m_Layer: 0
   m_Name: ZombiePrefb
   m_TagString: Untagged
@@ -1773,8 +1774,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8330405669348390677}
-  m_LocalRotation: {x: 0, y: 0.5751338, z: 0, w: 0.8180594}
-  m_LocalPosition: {x: 128.6, y: 0.28, z: 24.98}
+  m_LocalRotation: {x: -0, y: -0.08305601, z: -0, w: 0.99654496}
+  m_LocalPosition: {x: 0.24326192, y: -1.251131, z: -1.2740204}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
   - {fileID: 6386652862057991154}
@@ -1842,8 +1843,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1516fb4eeccbd294db66e41380812517, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 0
-  ZRotation: 0
+  speed: 2
+  agent: {fileID: 941896970}
+  atacking: 0
+  isDead: 0
+  health: 2
+--- !u!195 &941896970
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8330405669348390677}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 1
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 1
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &8330405669348390679
 GameObject:
   m_ObjectHideFlags: 0
@@ -2476,7 +2502,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8330405669348390743}
-  m_LocalRotation: {x: -0.7071069, y: -0, z: -0, w: 0.70710677}
+  m_LocalRotation: {x: -0.7071069, y: 0.0000000037252899, z: 0.0000000037252899, w: 0.70710677}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 91.15346, y: 91.15346, z: 91.153435}
   m_Children:
