@@ -1,18 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityStandardAssets.Characters.FirstPerson;
 
 public class DoorController : MonoBehaviour
 {
 
     private GameObject _player;
-    [SerializeField] bool leftOpenDirection;//jak true to się otwierają prawo w lewo wzdłuż x
+    [SerializeField]
+    bool leftOpenDirection;//jak true to się otwierają prawo w lewo wzdłuż x
     public bool OpenDoors;
     public bool CloseDoors;
+    float distance;
+    public Text text;
     void Start()
     {
         _player = GameObject.FindGameObjectWithTag("Player");
-
     }
 
     void Update()
@@ -32,19 +36,41 @@ public class DoorController : MonoBehaviour
         {
             if (OpenDoors)
             {
-                transform.position += new Vector3(0,0,2 * Time.deltaTime);
+                transform.position += new Vector3(0, 0, 2 * Time.deltaTime);
             }
             if (CloseDoors)
             {
-                transform.position -= new Vector3(0,0,2 * Time.deltaTime);
+                transform.position -= new Vector3(0, 0, 2 * Time.deltaTime);
             }
         }
     }
-
-    public void SetDoorAsOpen()
+    void OnMouseOver()
     {
-        StartCoroutine(OpenDoor());
-
+        distance = hero.DistanceFromTarget;
+        if (distance <= 3)
+        {
+            if (hero.AmountOfKeys > 0)
+            {
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    StartCoroutine(OpenDoor());
+                    hero.AmountOfKeys--;
+                }
+                text.text = "aby przejśc do następnego lewela naciśnij klawisz e";
+            }
+            else
+            {
+                text.text = "aby otworzyć drzwi musisz posiadać klucz ";
+            }
+        }
+        else
+        {
+            text.text = "";
+        }
+    }
+    void OnMouseExit()
+    {
+        text.text = "";
     }
     IEnumerator OpenDoor()
     {

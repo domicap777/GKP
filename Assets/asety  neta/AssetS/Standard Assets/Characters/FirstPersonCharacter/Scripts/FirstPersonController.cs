@@ -284,10 +284,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
         //sprawdzamy tag z jakim objektem zasz³a kolizja 
         private void CheckHitTag(ControllerColliderHit collider)
         {
-            if (collider.transform.tag == "Door")
-            {
-                collider.gameObject.GetComponent<DoorController>().SetDoorAsOpen();
-            }
+            //if (collider.transform.tag == "Door")
+            //{
+            //    collider.gameObject.GetComponent<DoorController>().SetDoorAsOpen();
+            //}
         }
     }
 }

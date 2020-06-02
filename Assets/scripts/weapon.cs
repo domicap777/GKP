@@ -78,8 +78,7 @@ public class weapon : MonoBehaviour
             {
                 if (Physics.Raycast(ray, out hit, range))
                 {
-                    Debug.Log("bullet");
-                    if (enptyGunSound != null)
+                    if (bulletHole != null)
                         Instantiate(bulletHole, hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal)).transform.parent=hit.collider.gameObject.transform;
                     hit.collider.gameObject.SendMessage("pistolHit", demage, SendMessageOptions.DontRequireReceiver);
                 }
@@ -122,7 +121,8 @@ public class weapon : MonoBehaviour
     {
         if (ammoClipt != ammoClipSize)
         {
-            source.PlayOneShot(reloadSound);
+            if (reloadSound != null)
+                source.PlayOneShot(reloadSound);
             isRealouding = true;
             yield return new WaitForSeconds(reloadingTime);
             if (ammo > ammoClipSize - ammoClipt)
