@@ -68,4 +68,13 @@ public class hero : MonoBehaviour
         yield return new WaitForSeconds(2.0f);
         information.text = "";
     }
+    public void HurtHero(int demage)
+    {
+        this.health -= demage;
+        if(health<=0)
+        {
+            health = 0;
+            Debug.Log("umarles");
+        }
+    }
 }
