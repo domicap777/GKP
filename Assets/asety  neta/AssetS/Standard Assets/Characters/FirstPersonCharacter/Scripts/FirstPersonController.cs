@@ -289,6 +289,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
             //{
             //    collider.gameObject.GetComponent<DoorController>().SetDoorAsOpen();
             //}
+            if(collider.transform.tag.ToLower().Equals("collectable"))
+            {
+                collider.gameObject.GetComponent<CollectableIteam>().PickUp();
+            }
         }
     }
 }

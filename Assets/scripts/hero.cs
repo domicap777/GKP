@@ -77,4 +77,24 @@ public class hero : MonoBehaviour
             Debug.Log("umarles");
         }
     }
+    public bool HealHero(int number)
+    {
+        if ((this.Health + number) >= 100)
+            return false;
+        else
+        {
+            this.Health += number;
+            return true;
+        }
+    }
+    public bool UpgradeHeroArrmor(int number)
+    {
+        if ((this.Armor + number) >= 100)
+            return false;
+        else
+        {
+            this.Armor += number;
+            return true;
+        }
+    }
 }

@@ -23,6 +23,8 @@ public class ZombieHead : MonoBehaviour
                 transform.parent.gameObject.GetComponent<ZombieController>().pistolHit(demage/ dmgMultiply);
                 Debug.Log(bodyType + demage / dmgMultiply);
                 break;
+            default:
+                break;
 
         }
     }

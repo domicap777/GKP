@@ -195,4 +195,5 @@ public class ZombieController : MonoBehaviour
         yield return new WaitForSeconds(2.0f);//destroy object after secounds
         Destroy(gameObject);
     }
+    
 }
