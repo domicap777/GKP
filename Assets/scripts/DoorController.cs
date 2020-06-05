@@ -65,7 +65,7 @@ public class DoorController : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.E))
                 {
                     StartCoroutine(OpenDoor());
-                  /// hero.AmountOfKeys--;
+                    hero.AmountOfKeys--;
                 }
                 text.text = "aby przejśc do następnego lewela naciśnij klawisz e";
             }
