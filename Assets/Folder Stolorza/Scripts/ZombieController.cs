@@ -1,17 +1,20 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO.Compression;
 using UnityEditor.Experimental.UIElements.GraphView;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
+using UnityEngine.SocialPlatforms;
+
 enum MoveState
 {
     RotateState,
     FollowState,
     AtackState,
     DeadState,
-    WalkState
+    IdleState
 }
 public class ZombieController : MonoBehaviour
 {
@@ -23,8 +26,12 @@ public class ZombieController : MonoBehaviour
     Transform player;
     Animator anim;
     public NavMeshAgent agent;
-    public bool atacking=false,isDead=false;
-    [SerializeField] int health=2;
+    private bool atacking=false,isDead=false,looking ,isHurt;
+    [SerializeField] int health;
+    [SerializeField] int demage;
+    [SerializeField] float rangeOfView;
+    [SerializeField] float rangeOfAtack;
+
     void Start()
     {
         transform = GetComponent<Transform>();
@@ -32,52 +39,74 @@ public class ZombieController : MonoBehaviour
         moveVector = new Vector3(0, 0, 0);
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
         anim = GetComponent<Animator>();
-        moveDirection = MoveState.FollowState;
+        moveDirection = MoveState.IdleState;
     }
     private void FixedUpdate()
     {
-            CheckWhereToFace();   
+        CheckWhereToFace();
     }
     void CheckWhereToFace()
     {
-       switch(moveDirection)
-       {
+        
+        switch (moveDirection)
+        {
             case MoveState.RotateState://stan w którym postać się obraca
-                transform.Rotate(0.0f,90 * Time.deltaTime, 0.0f);
+                transform.Rotate(0.0f, 90 * Time.deltaTime, 0.0f);
                 //TODO: idle annimation state
                 break;
-            case MoveState.WalkState://stan w którym postać porusza się do przodu
-
+            case MoveState.IdleState://stan w którym postać porusza się do przodu
+                anim.SetBool("isIdle", true);
+                anim.SetBool("isMove", false);
+                agent.speed = 0;
                 break;
             case MoveState.FollowState://stan w którym postać w strone gracza
-                if (!atacking)
-                {
-                    agent.SetDestination(player.position);//cel poruszania sie obiektu
-                    agent.speed = speed;
-                    if (Vector3.Distance(player.position, this.transform.position) < 5)
-                        moveDirection = MoveState.AtackState;
-                }
+                if (looking)
+                { 
+                    if (!atacking)
+                    {
+                        anim.SetBool("isMove", true);
+                        anim.SetBool("isIdle", false);
+                        if (agent.enabled)
+                        {
+                            
+                            agent.SetDestination(player.position);//cel poruszania sie obiektu
+                            agent.speed = speed;
+                        }
+                        if (Vector3.Distance(player.position, this.transform.position) <= rangeOfAtack)
+                        {
+                            moveDirection = MoveState.AtackState;
+                            atacking = true;
+                        }
+                    }
+                 }
                 break;
             case MoveState.AtackState:
-                agent.SetDestination(player.position);
-                anim.SetBool("isAtack", true);
-                agent.speed = 0;
-                if (Vector3.Distance(player.position, this.transform.position) >= 5)
-                    moveDirection = MoveState.FollowState;
+                if (!isHurt)
+                {
+                    agent.SetDestination(player.position);
+                    anim.SetBool("isAtack", true);
+                    anim.SetBool("isMove", true);
+                    anim.SetBool("isIdle", false);
+                    agent.speed = 0;
+                    if (Vector3.Distance(player.position, this.transform.position) > rangeOfAtack)
+                        moveDirection = MoveState.FollowState;
+                }
                 break;
 
             case MoveState.DeadState:
+                transform.GetChild(2).GetComponent<BoxCollider>().enabled = false;//get leg colider id
                 isDead = true;
                 agent.speed = 0;
-                StartDeadAnim();
-                gameObject.GetComponent<CapsuleCollider>().enabled = false;
+                //gameObject.GetComponent<CapsuleCollider>().enabled = false;
                 gameObject.GetComponent<NavMeshAgent>().enabled = false;
-               // agent.enabled = false;
+                StartDeadAnim();
+                // agent.enabled = false;
                 break;
             default:
                 break;
        }
-
+        FindPlayerForward();
+        CheckIfDead();
     }
     void EndAtackAnim()
     {
@@ -88,9 +117,30 @@ public class ZombieController : MonoBehaviour
     {
         anim.SetBool("isDead", true);
     }
+    void CheckIfDead()
+    {
+        if (health <= 0)
+            if (moveDirection != MoveState.DeadState)
+                moveDirection = MoveState.DeadState;
+    }
+    void StartHurtAnim()
+    {
+        isHurt = true;
+        anim.SetBool("isHurt", true);
+        if(health<=0)
+        {
+            moveDirection = MoveState.DeadState;
+        }
+    }
     void EndHurtAnim()
     {
         anim.SetBool("isHurt", false);
+        isHurt = false;
+    }
+    void HurtPlaye()
+    {
+        if ((Vector3.Distance(player.position, this.transform.position) <= rangeOfAtack + 0.5))
+            GameObject.FindGameObjectWithTag("MainCamera").GetComponent<hero>().HurtHero(demage);
     }
     public void pistolHit(int demage)
     {
@@ -101,8 +151,49 @@ public class ZombieController : MonoBehaviour
         }
         else
         {
-            anim.SetBool("isHurt", true);
+            StartHurtAnim();
         }
 
     }
+
+    private void FindPlayerForward()
+    {
+        if (moveDirection != MoveState.DeadState)
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, rangeOfView))
+            {
+                StopCoroutine("Watch");
+                looking = true;
+                moveDirection = MoveState.FollowState;
+                if (atacking)
+                    moveDirection = MoveState.AtackState;
+            }
+            else
+            {
+                StartCoroutine("Watch");
+            }
+        }
+    }
+    IEnumerator Watch ()
+    {
+        yield return new WaitForSeconds(1.1f);
+        // go to idle state
+        if (Vector3.Distance(player.position, this.transform.position) > rangeOfView / 2)
+        {
+            looking = false;
+            moveDirection = MoveState.IdleState;
+        }
+    }
+
+    void DestroyZombieObject()
+    {
+        StartCoroutine("CleanZombie");
+    }
+    IEnumerator CleanZombie()
+    {
+        yield return new WaitForSeconds(2.0f);//destroy object after secounds
+        Destroy(gameObject);
+    }
+    
 }

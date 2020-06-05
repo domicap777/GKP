@@ -284,6 +284,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             body.AddForceAtPosition(m_CharacterController.velocity * 0.1f, hit.point, ForceMode.Impulse);
 
         }
+        
         //sprawdzamy tag z jakim objektem zasz³a kolizja 
         private void CheckHitTag(ControllerColliderHit collider)
         {
@@ -291,6 +292,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
             //{
             //    collider.gameObject.GetComponent<DoorController>().SetDoorAsOpen();
             //}
+            if(collider.transform.tag.ToLower().Equals("collectable"))
+            {
+                collider.gameObject.GetComponent<CollectableIteam>().PickUp();
+            }
         }
     }
 }
