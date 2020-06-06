@@ -8,9 +8,12 @@ using UnityEngine.AI;
 using UnityEngine.EventSystems;
 using UnityEngine.SocialPlatforms;
 
+/// <summary>
+/// Klasa do kontroli zachowań i właściwości przeciwnika zombie
+/// </summary>
 enum MoveState
 {
-    RotateState,
+    PatrolState,
     FollowState,
     AtackState,
     DeadState,
@@ -19,14 +22,14 @@ enum MoveState
 public class ZombieController : MonoBehaviour
 {
     private Transform transform;
-    private Rigidbody rb;
     [SerializeField] private float speed;
-    Vector3 moveVector;
     MoveState moveDirection;
     Transform player;
     Animator anim;
     public NavMeshAgent agent;
     private bool atacking=false,isDead=false,looking ,isHurt;
+    [SerializeField] Transform waypoint1,waypoint2;
+    private Transform desinationWaypoint;
     [SerializeField] int health;
     [SerializeField] int demage;
     [SerializeField] float rangeOfView;
@@ -35,24 +38,29 @@ public class ZombieController : MonoBehaviour
     void Start()
     {
         transform = GetComponent<Transform>();
-        rb = GetComponent<Rigidbody>();
-        moveVector = new Vector3(0, 0, 0);
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
         anim = GetComponent<Animator>();
         moveDirection = MoveState.IdleState;
+        desinationWaypoint = waypoint1;
+        agent.autoBraking = false;
     }
     private void FixedUpdate()
     {
         CheckWhereToFace();
     }
+    /// <summary>
+    /// Rozpoznanie i wykonanie stanu zachowania w którym znajduje się zombie
+    /// </summary>
     void CheckWhereToFace()
     {
         
         switch (moveDirection)
         {
-            case MoveState.RotateState://stan w którym postać się obraca
-                transform.Rotate(0.0f, 90 * Time.deltaTime, 0.0f);
-                //TODO: idle annimation state
+            case MoveState.PatrolState://stan w którym postać się obraca
+                agent.SetDestination(desinationWaypoint.position);
+                swapDestinationPoints();
+                anim.SetBool("isIdle", false);
+                anim.SetBool("isMove", true);
                 break;
             case MoveState.IdleState://stan w którym postać porusza się do przodu
                 anim.SetBool("isIdle", true);
@@ -85,7 +93,7 @@ public class ZombieController : MonoBehaviour
                 {
                     agent.SetDestination(player.position);
                     anim.SetBool("isAtack", true);
-                    anim.SetBool("isMove", true);
+                    anim.SetBool("isMove", false);
                     anim.SetBool("isIdle", false);
                     agent.speed = 0;
                     if (Vector3.Distance(player.position, this.transform.position) > rangeOfAtack)
@@ -94,19 +102,32 @@ public class ZombieController : MonoBehaviour
                 break;
 
             case MoveState.DeadState:
-                transform.GetChild(2).GetComponent<BoxCollider>().enabled = false;//get leg colider id
+                transform.GetChild(0).GetComponent<BoxCollider>().enabled = false;//get leg colider id
                 isDead = true;
                 agent.speed = 0;
                 //gameObject.GetComponent<CapsuleCollider>().enabled = false;
                 gameObject.GetComponent<NavMeshAgent>().enabled = false;
                 StartDeadAnim();
-                // agent.enabled = false;
                 break;
             default:
                 break;
        }
         FindPlayerForward();
         CheckIfDead();
+    }
+    /// <summary>
+    /// zmiana punktu w którym ma się poruszać zombie
+    /// </summary>
+    void swapDestinationPoints()
+    {
+        if(Vector3.Distance(this.gameObject.transform.position,waypoint1.position) < 2)
+        {
+            desinationWaypoint = waypoint2;
+        }
+        if (Vector3.Distance(this.gameObject.transform.position, waypoint2.position) < 2)
+        {
+            desinationWaypoint = waypoint1;
+        }
     }
     void EndAtackAnim()
     {
@@ -142,6 +163,10 @@ public class ZombieController : MonoBehaviour
         if ((Vector3.Distance(player.position, this.transform.position) <= rangeOfAtack + 0.5))
             GameObject.FindGameObjectWithTag("MainCamera").GetComponent<hero>().HurtHero(demage);
     }
+    /// <summary>
+    /// Kiedy obiekt otrzymuje obrażenia wykonaj animacje po czasie albo zmień stan
+    /// </summary>
+    /// <param name="demage">ilosc obrazen</param>
     public void pistolHit(int demage)
     {
         this.health -= demage;
@@ -155,14 +180,19 @@ public class ZombieController : MonoBehaviour
         }
 
     }
-
+    /// <summary>
+    /// Zrób Raycast aby sprawdzić czy nie w zasięgu nie znajduje się gracz 
+    /// </summary>
     private void FindPlayerForward()
     {
+        if(moveDirection !=MoveState.PatrolState)
+        { 
         if (moveDirection != MoveState.DeadState)
         {
             RaycastHit hit;
-            if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, rangeOfView))
+            if (Physics.Raycast(transform.position, transform.forward, out hit, rangeOfView))
             {
+               // Debug.DrawLine(this.transform.position, transform.forward,Color.green,rangeOfView);
                 StopCoroutine("Watch");
                 looking = true;
                 moveDirection = MoveState.FollowState;
@@ -174,7 +204,12 @@ public class ZombieController : MonoBehaviour
                 StartCoroutine("Watch");
             }
         }
+        }
     }
+    /// <summary>
+    /// Sprawdz czy gracz jest w zaięgu 
+    /// </summary>
+    /// <returns>rozpocznij kod po czasie 1.1f</returns>
     IEnumerator Watch ()
     {
         yield return new WaitForSeconds(1.1f);
@@ -185,7 +220,9 @@ public class ZombieController : MonoBehaviour
             moveDirection = MoveState.IdleState;
         }
     }
-
+    /// <summary>
+    /// Zniszcz obiekt zombie
+    /// </summary>
     void DestroyZombieObject()
     {
         StartCoroutine("CleanZombie");
