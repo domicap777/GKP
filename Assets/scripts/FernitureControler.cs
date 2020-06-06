@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// klasa odpowiedzialna za niszczenie przedmiotów 
+/// </summary>
 public class FernitureControler : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -17,14 +19,4 @@ public class FernitureControler : MonoBehaviour
         }
     }
 
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

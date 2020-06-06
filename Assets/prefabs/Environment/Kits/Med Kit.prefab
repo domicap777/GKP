@@ -80,7 +80,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   iteamType: health_boost
-  number: 0
+  number: 20
 --- !u!1 &4322196846888892033
 GameObject:
   m_ObjectHideFlags: 0

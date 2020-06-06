@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// klasa odpowiedzialna za podniesienie klucza 
+/// </summary>
 public class KeyControler : MonoBehaviour
 {
-    // Start is called before the first frame update
     [SerializeField]
     GameObject player;
     [SerializeField]

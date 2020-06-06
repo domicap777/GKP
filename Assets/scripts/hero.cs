@@ -37,7 +37,7 @@ public class hero : MonoBehaviour
         imageArmor = armorBar.GetComponent<RectTransform>();
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         RaycastHit hit;
@@ -45,13 +45,7 @@ public class hero : MonoBehaviour
         {
             DistanceFromTarget = hit.distance;
             TargetTag = hit.collider.tag;
-            //if(TargetTag=="Door"&&hit.distance)
-            //{
-            //    hit.collider.gameObject.SendMessage("OnOver");
-            //}
-
         }
-        //
         textHealth.text = health.ToString();
         textarmor.text = armor.ToString();
         imageHealth.sizeDelta = new Vector2(4 * health, 100);
@@ -62,12 +56,20 @@ public class hero : MonoBehaviour
     {
         StartCoroutine("PickUpKey");
     }
+    /// <summary>
+    /// korutyna odpowiedzialna za informowanie gracza o podniesionym kluczu 
+    /// </summary>
+    /// <returns></returns>
     IEnumerator PickUpKey()
     {
         information.text = "znalazłeś klucz do otwarcia drzwi do następnego lewelu";
         yield return new WaitForSeconds(2.0f);
         information.text = "";
     }
+    /// <summary>
+    /// zadawanie obrażeń graczowi 
+    /// </summary>
+    /// <param name="demage"></param>
     public void HurtHero(int demage)
     {
         this.health -= demage;
@@ -77,23 +79,37 @@ public class hero : MonoBehaviour
             Debug.Log("umarles");
         }
     }
+    /// <summary>
+    /// leczenie bohatera
+    /// </summary>
+    /// <param name="number"></param>
+    /// <returns>zwraca prawdę jeśli można podnieść pancerz bohaterowi</returns>
     public bool HealHero(int number)
     {
-        if ((this.Health + number) >= 100)
+        if (this.Health == 100)
             return false;
         else
         {
             this.Health += number;
+            if (this.Health > 100)
+                Health = 100;
             return true;
         }
     }
+    /// <summary>
+    /// zwiększenie ilości pancerza bohaterowi
+    /// </summary>
+    /// <param name="number"></param>
+    /// <returns>zwraca prawdę jeśli można uleczyć bohatera</returns>
     public bool UpgradeHeroArrmor(int number)
     {
-        if ((this.Armor + number) >= 100)
+        if (this.Armor == 100)
             return false;
         else
         {
             this.Armor += number;
+            if (this.Armor > 100)
+                this.Armor = 100;
             return true;
         }
     }

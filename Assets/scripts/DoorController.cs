@@ -5,6 +5,9 @@ using UnityEngine.AI;
 using UnityEngine.UI;
 using UnityStandardAssets.Characters.FirstPerson;
 
+/// <summary>
+/// klasa odpowiedzailna za animację przejścia na następnego pomieszzcenia 
+/// </summary>
 public class DoorController : MonoBehaviour
 {
 
@@ -23,13 +26,20 @@ public class DoorController : MonoBehaviour
     private string textToDisplay;
     [SerializeField]
     bool closeAfterOpening = true;
+    [SerializeField]
+    GameObject boss = null;
+    BossControler bossControler;
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
         characterController = player.GetComponent<CharacterController>();
         agent = player.GetComponent<NavMeshAgent>();
+        if(boss!=null)
+        bossControler = boss.GetComponent<BossControler>();
     }
-
+    /// <summary>
+    /// animacja otwarcia i zamknięcia drzwi 
+    /// </summary>
     void Update()
     {
         if (leftOpenDirection)
@@ -55,6 +65,9 @@ public class DoorController : MonoBehaviour
             }
         }
     }
+    /// <summary>
+    /// wyświetlenie podpowiedzi dla gracza oraz sprawdenie aktywniści gracza 
+    /// </summary>
     void OnMouseOver()
     {
         distance = hero.DistanceFromTarget;
@@ -80,11 +93,18 @@ public class DoorController : MonoBehaviour
                 text.text = "";
         }
     }
+    /// <summary>
+    /// usunięcie podpowiedzi dla gracza 
+    /// </summary>
     void OnMouseExit()
     {
         if (opened == false)
             text.text = "";
     }
+    /// <summary>
+    /// animacja przejścia do następnego pomieszczenia 
+    /// </summary>
+    /// <returns></returns>
     IEnumerator OpenDoor()
     {
         opened = true;
@@ -93,6 +113,8 @@ public class DoorController : MonoBehaviour
         yield return new WaitForSeconds(0.01f);
         text.text = textToDisplay; 
         yield return new WaitForSeconds(2.0f);
+        if (bossControler != null)
+            bossControler.SendMessage("firstLanding", transform.position, SendMessageOptions.DontRequireReceiver);
         agent.enabled = true;
         agent.SetDestination(this.transform.position + new Vector3(this.transform.rotation.y == 0 ? -2 : -6, 1, this.transform.rotation.y==0?2:-2));
         OpenDoors = false;

@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// 
+/// klasa odpowiedzialna za animację wodospadu
+/// </summary>
 public class waterfall: MonoBehaviour
 {
     [SerializeField]

@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// klasa odpowiedzialna za podniesienie broni jeśli dana broń jest już w posiadanu zwiększana jest ilość amunicji 
+/// </summary>
 public class pickUpWeapon : MonoBehaviour
 {
     [SerializeField]
@@ -31,16 +34,5 @@ public class pickUpWeapon : MonoBehaviour
             }
             Destroy(this.gameObject);
         }
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

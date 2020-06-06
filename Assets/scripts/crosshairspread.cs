@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.Characters.FirstPerson;
-
+/// <summary>
+/// klasa odpowiedzialna za obliczenie oraz wizualizację rozrzutu broni 
+/// </summary>
 public class crosshairspread : MonoBehaviour
 {
     [SerializeField]
@@ -31,7 +33,7 @@ public class crosshairspread : MonoBehaviour
         rightPart.GetComponent<RectTransform>().localPosition = new Vector3(-startPosition , 0, 0);
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         targetSpread = 0;

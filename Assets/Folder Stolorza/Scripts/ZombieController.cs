@@ -16,8 +16,10 @@ enum MoveState
     DeadState,
     IdleState
 }
+
 public class ZombieController : MonoBehaviour
 {
+
     private Transform transform;
     private Rigidbody rb;
     [SerializeField] private float speed;
@@ -31,6 +33,7 @@ public class ZombieController : MonoBehaviour
     [SerializeField] int demage;
     [SerializeField] float rangeOfView;
     [SerializeField] float rangeOfAtack;
+    private float viewAngle;
 
     void Start()
     {
@@ -142,6 +145,10 @@ public class ZombieController : MonoBehaviour
         if ((Vector3.Distance(player.position, this.transform.position) <= rangeOfAtack + 0.5))
             GameObject.FindGameObjectWithTag("MainCamera").GetComponent<hero>().HurtHero(demage);
     }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="demage">asd</param>
     public void pistolHit(int demage)
     {
         this.health -= demage;
@@ -175,6 +182,16 @@ public class ZombieController : MonoBehaviour
             }
         }
     }
+    //private void lookingg()
+    //{
+    //    Vector3 direction = player.position - transform.position;
+    //    float angle = Vector3.Angle(direction, transform.forward);
+    //    if(angle*2 <= viewAngle)
+    //    {
+    //        RaycastHit hit;
+    //        if (Physics.Raycast(transform.position,)
+    //    }
+    //}
     IEnumerator Watch ()
     {
         yield return new WaitForSeconds(1.1f);

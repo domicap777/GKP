@@ -3,9 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 
+/// klasa odpowiedzialna za wmianę broni 
+/// </summary>
 public class WeaponSwitch : MonoBehaviour
 {
-    // Start is called before the first frame update
     [SerializeField]
     List<weapon> weapons;
     int previousWeapon = 0;

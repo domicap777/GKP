@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.Utility;
 
+/// <summary>
+/// klasa odpowiedzialna za wyświetlanie posiadanych broni 
+/// </summary>
 public class UiWeaponsControler : MonoBehaviour
 {
 

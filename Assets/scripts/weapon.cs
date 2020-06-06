@@ -5,6 +5,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
+/// <summary>
+/// 
+/// klasa odpowiedzialna za obsługę broni 
+/// </summary>
 public class weapon : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -78,7 +82,7 @@ public class weapon : MonoBehaviour
             {
                 if (Physics.Raycast(ray, out hit, range))
                 {
-                    if (bulletHole != null)
+                    if (bulletHole != null&&hit.transform.tag!="Enemy")
                         Instantiate(bulletHole, hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal)).transform.parent=hit.collider.gameObject.transform;
                     hit.collider.gameObject.SendMessage("pistolHit", demage, SendMessageOptions.DontRequireReceiver);
                 }
