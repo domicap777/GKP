@@ -19,24 +19,24 @@ enum MoveState
     DeadState,
     IdleState
 }
-
 public class ZombieController : MonoBehaviour
 {
-
     private Transform transform;
+    public Transform visionPoint;
     [SerializeField] private float speed;
     MoveState moveDirection;
     Transform player;
     Animator anim;
     public NavMeshAgent agent;
-    private bool atacking=false,isDead=false,looking ,isHurt;
-    [SerializeField] Transform waypoint1,waypoint2;
+    private bool atacking = false, isDead = false, looking, isHurt;
+    [SerializeField] Transform waypoint1, waypoint2;
     private Transform desinationWaypoint;
     [SerializeField] int health;
     [SerializeField] int demage;
     [SerializeField] float rangeOfView;
     [SerializeField] float rangeOfAtack;
-    private float viewAngle;
+    public float viewAngle;
+    public bool patrolState;
 
     void Start()
     {
@@ -44,6 +44,8 @@ public class ZombieController : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
         anim = GetComponent<Animator>();
         moveDirection = MoveState.IdleState;
+        if (patrolState)
+            moveDirection = MoveState.PatrolState;
         desinationWaypoint = waypoint1;
         agent.autoBraking = false;
     }
@@ -56,7 +58,7 @@ public class ZombieController : MonoBehaviour
     /// </summary>
     void CheckWhereToFace()
     {
-        
+
         switch (moveDirection)
         {
             case MoveState.PatrolState://stan w którym postać się obraca
@@ -72,14 +74,14 @@ public class ZombieController : MonoBehaviour
                 break;
             case MoveState.FollowState://stan w którym postać w strone gracza
                 if (looking)
-                { 
+                {
                     if (!atacking)
                     {
                         anim.SetBool("isMove", true);
                         anim.SetBool("isIdle", false);
                         if (agent.enabled)
                         {
-                            
+
                             agent.SetDestination(player.position);//cel poruszania sie obiektu
                             agent.speed = speed;
                         }
@@ -89,7 +91,7 @@ public class ZombieController : MonoBehaviour
                             atacking = true;
                         }
                     }
-                 }
+                }
                 break;
             case MoveState.AtackState:
                 if (!isHurt)
@@ -114,7 +116,7 @@ public class ZombieController : MonoBehaviour
                 break;
             default:
                 break;
-       }
+        }
         FindPlayerForward();
         CheckIfDead();
     }
@@ -123,7 +125,7 @@ public class ZombieController : MonoBehaviour
     /// </summary>
     void swapDestinationPoints()
     {
-        if(Vector3.Distance(this.gameObject.transform.position,waypoint1.position) < 2)
+        if (Vector3.Distance(this.gameObject.transform.position, waypoint1.position) < 2)
         {
             desinationWaypoint = waypoint2;
         }
@@ -151,7 +153,7 @@ public class ZombieController : MonoBehaviour
     {
         isHurt = true;
         anim.SetBool("isHurt", true);
-        if(health<=0)
+        if (health <= 0)
         {
             moveDirection = MoveState.DeadState;
         }
@@ -167,9 +169,6 @@ public class ZombieController : MonoBehaviour
             GameObject.FindGameObjectWithTag("MainCamera").GetComponent<hero>().HurtHero(demage);
     }
     /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="demage">asd</param>
     /// Kiedy obiekt otrzymuje obrażenia wykonaj animacje po czasie albo zmień stan
     /// </summary>
     /// <param name="demage">ilosc obrazen</param>
@@ -191,42 +190,54 @@ public class ZombieController : MonoBehaviour
     /// </summary>
     private void FindPlayerForward()
     {
-        if(moveDirection !=MoveState.PatrolState)
-        { 
+
         if (moveDirection != MoveState.DeadState)
         {
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, transform.forward, out hit, rangeOfView))
+
+            if (EnemySpotted())
             {
-               // Debug.DrawLine(this.transform.position, transform.forward,Color.green,rangeOfView);
+                //RaycastHit hit;
+                //if (Physics.Raycast(transform.position, transform.forward, out hit, rangeOfView))
+                //{
+                //    // Debug.DrawLine(this.transform.position, transform.forward,Color.green,rangeOfView);
                 StopCoroutine("Watch");
                 looking = true;
                 moveDirection = MoveState.FollowState;
                 if (atacking)
                     moveDirection = MoveState.AtackState;
+
             }
             else
             {
                 StartCoroutine("Watch");
             }
         }
-        }
+
+
     }
-    //private void lookingg()
-    //{
-    //    Vector3 direction = player.position - transform.position;
-    //    float angle = Vector3.Angle(direction, transform.forward);
-    //    if(angle*2 <= viewAngle)
-    //    {
-    //        RaycastHit hit;
-    //        if (Physics.Raycast(transform.position,)
-    //    }
-    //}
+    public bool EnemySpotted()
+    {
+        Vector3 direction = player.transform.position - transform.position;
+        float angle = Vector3.Angle(direction, visionPoint.forward);
+
+        if (angle < viewAngle * 0.5f)
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(visionPoint.transform.position, direction.normalized, out hit, rangeOfView))
+            {
+                if (hit.collider.CompareTag("Player"))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     /// <summary>
     /// Sprawdz czy gracz jest w zaięgu 
     /// </summary>
     /// <returns>rozpocznij kod po czasie 1.1f</returns>
-    IEnumerator Watch ()
+    IEnumerator Watch()
     {
         yield return new WaitForSeconds(1.1f);
         // go to idle state
@@ -248,5 +259,5 @@ public class ZombieController : MonoBehaviour
         yield return new WaitForSeconds(2.0f);//destroy object after secounds
         Destroy(gameObject);
     }
-    
+
 }

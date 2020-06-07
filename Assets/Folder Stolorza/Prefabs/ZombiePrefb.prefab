@@ -2153,6 +2153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1516fb4eeccbd294db66e41380812517, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visionPoint: {fileID: 8330405669348747915}
   speed: 1.5
   agent: {fileID: 941896970}
   waypoint1: {fileID: 0}
@@ -2161,6 +2162,7 @@ MonoBehaviour:
   demage: 20
   rangeOfView: 10
   rangeOfAtack: 1.5
+  viewAngle: 0
 --- !u!195 &941896970
 NavMeshAgent:
   m_ObjectHideFlags: 0
