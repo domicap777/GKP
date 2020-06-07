@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 
@@ -76,7 +77,7 @@ public class hero : MonoBehaviour
         if(health<=0)
         {
             health = 0;
-            Debug.Log("umarles");
+            SceneManager.LoadScene(0);
         }
     }
     /// <summary>
