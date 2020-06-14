@@ -1,1 +1,1 @@
-# GKP 2.0
+gra w trakcie rozwoju 
